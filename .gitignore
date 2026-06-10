@@ -1,0 +1,6 @@
+*.bat
+.claude
+DESIGN.md
+docs/prd.md
+docs/spec.md
+.venv
