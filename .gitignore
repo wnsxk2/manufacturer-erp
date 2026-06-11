@@ -3,4 +3,7 @@
 DESIGN.md
 docs/prd.md
 docs/spec.md
+docs/GITHUB_SETUP.md
 .venv
+__pycache__/
+*.py[cod]
