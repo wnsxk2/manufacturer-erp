@@ -46,6 +46,12 @@ uv run pre-commit install --hook-type pre-commit --hook-type commit-msg
 | `chore` | 빌드·설정 변경                  |
 | `docs`  | 문서 수정                       |
 
+## 기여 흐름
+
+변경은 작업 브랜치에서 PR로 제출한다. 자세한 내용은 [docs/BRANCHING.md](./docs/BRANCHING.md)를 참고한다.
+
 ## 참고 문서
 
 - [docs/CONVENTION.md](./docs/CONVENTION.md) — SQL 작성 컨벤션 (프로시저 네이밍, 포맷 규칙 등)
+- [docs/BRANCHING.md](./docs/BRANCHING.md) — 브랜치 전략 및 PR 흐름
+- [docs/GITHUB_SETUP.md](./docs/GITHUB_SETUP.md) — GitHub 저장소 최초 설정 가이드
