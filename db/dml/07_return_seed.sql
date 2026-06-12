@@ -11,11 +11,11 @@
 INSERT INTO t_product_return (product_order_id, return_reason_id, quantity, returned_at)
 SELECT
     o.id                                                                                        AS product_order_id
-  , 'RTN00' || (((row_number() OVER (ORDER BY o.id) - 1) % 6) + 1)::TEXT                      AS return_reason_id
-  , GREATEST(1, o.quantity / 3)                                                                 AS quantity
-  , o.ordered_at
-      + INTERVAL '7 days'
-      + ((o.id * 3) % 15) * INTERVAL '1 day'                                                   AS returned_at
+    , 'RTN00' || (((row_number() OVER (ORDER BY o.id) - 1) % 6) + 1)::TEXT                    AS return_reason_id
+    , GREATEST(1, o.quantity / 3)                                                               AS quantity
+    , o.ordered_at
+    + INTERVAL '7 days'
+    + ((o.id * 3) % 15) * INTERVAL '1 day'                                                     AS returned_at
 FROM t_product_order o
 WHERE o.order_status IN ('SHIPPED', 'DELIVERED')
 ORDER BY o.id

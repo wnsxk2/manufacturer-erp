@@ -1,9 +1,20 @@
 *.bat
-.claude
-DESIGN.md
+
+# docs
 docs/prd.md
 docs/spec.md
 docs/GITHUB_SETUP.md
+docs/superpowers
+
+# python
 .venv
 __pycache__/
 *.py[cod]
+
+# agent
+.agents
+.claude
+.codex
+AGENTS.md
+CLAUDE.md
+DESIGN.md
