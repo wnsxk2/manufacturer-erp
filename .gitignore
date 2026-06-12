@@ -12,7 +12,9 @@ __pycache__/
 *.py[cod]
 
 # agent
+.agents
 .claude
+.codex
 AGENTS.md
 CLAUDE.md
 DESIGN.md
