@@ -6,16 +6,16 @@
 -- 0) 재실행 안전성 보장 (TRUNCATE + IDENTITY 시퀀스 초기화)
 -- ============================================================
 TRUNCATE TABLE
-    t_product_return
-  , t_product_order
-  , t_inventory
-  , t_production
-  , t_employee
-  , t_customer
-  , t_product
-  , cd_return_reason
-  , cd_employee_rank
-  , cd_department
+t_product_return
+, t_product_order
+, t_inventory
+, t_production
+, t_employee
+, t_customer
+, t_product
+, cd_return_reason
+, cd_employee_rank
+, cd_department
 RESTART IDENTITY CASCADE;
 
 
@@ -25,7 +25,7 @@ RESTART IDENTITY CASCADE;
 
 -- 1-1) 부서 코드
 INSERT INTO cd_department (id, name) VALUES
-  ('DEP01', '영업부')
+('DEP01', '영업부')
 , ('DEP02', '생산부')
 , ('DEP03', '관리부')
 , ('DEP04', '품질관리부')
@@ -33,7 +33,7 @@ INSERT INTO cd_department (id, name) VALUES
 
 -- 1-2) 직급 코드
 INSERT INTO cd_employee_rank (id, name) VALUES
-  ('RNK01', '사원')
+('RNK01', '사원')
 , ('RNK02', '주임')
 , ('RNK03', '대리')
 , ('RNK04', '과장')
@@ -41,7 +41,7 @@ INSERT INTO cd_employee_rank (id, name) VALUES
 
 -- 1-3) 반품 사유 코드
 INSERT INTO cd_return_reason (id, reason) VALUES
-  ('RTN001', '불량')
+('RTN001', '불량')
 , ('RTN002', '오배송')
 , ('RTN003', '단순변심')
 , ('RTN004', '파손')
@@ -57,7 +57,7 @@ INSERT INTO cd_return_reason (id, reason) VALUES
 -- 가구 7종 (id 1~7), 조명 4종 (id 8~11), 수납 7종 (id 12~18)
 -- is_active=FALSE: id 16(행거 H2), id 17(옷장 C1) → 단종 제품
 INSERT INTO t_product (name, price, is_active) VALUES
-  ('책상 A1',      180000, TRUE)   --  1
+('책상 A1',      180000, TRUE)   --  1
 , ('책상 B2',      240000, TRUE)   --  2
 , ('의자 S1',       89000, TRUE)   --  3
 , ('의자 S2',      120000, TRUE)   --  4
@@ -80,7 +80,7 @@ INSERT INTO t_product (name, price, is_active) VALUES
 -- contract_date: 모두 2025-02-28 이하 (주문일 2025-03-01 이상과 충돌 방지)
 -- is_active=FALSE: id 8, 15, 22
 INSERT INTO t_customer (name, address, contract_date, is_active) VALUES
-  ('한성상사',           '서울시 강남구 테헤란로 100',         '2025-01-05 09:00:00+09', TRUE)   --  1
+('한성상사',           '서울시 강남구 테헤란로 100',         '2025-01-05 09:00:00+09', TRUE)   --  1
 , ('대원유통',           '경기도 성남시 분당구 판교로 50',      '2025-01-08 10:00:00+09', TRUE)   --  2
 , ('미래인테리어',        '서울시 마포구 홍익로 30',            '2025-01-10 09:30:00+09', TRUE)   --  3
 , ('(주)신성퍼니처',     '인천시 남동구 논현로 200',            '2025-01-12 11:00:00+09', TRUE)   --  4
@@ -112,7 +112,7 @@ INSERT INTO t_customer (name, address, contract_date, is_active) VALUES
 -- 퇴직자: id 30, 31, 32, 33 (resignation_date IS NOT NULL, is_active=FALSE)
 INSERT INTO t_employee (department_id, employee_rank_id, name, rrn, address, start_date, resignation_date, is_active) VALUES
 -- 생산 풀 (id 1~12)
-  ('DEP02', 'RNK02', '김민준', '880315-1234561', '서울시 노원구 공릉로 100',        '2022-03-02 09:00:00+09', NULL, TRUE)  --  1
+('DEP02', 'RNK02', '김민준', '880315-1234561', '서울시 노원구 공릉로 100',        '2022-03-02 09:00:00+09', NULL, TRUE)  --  1
 , ('DEP02', 'RNK03', '이서연', '901122-2345672', '경기도 구리시 아차산로 50',        '2021-01-04 09:00:00+09', NULL, TRUE)  --  2
 , ('DEP02', 'RNK01', '박도윤', '970801-1456783', '서울시 중랑구 망우로 30',          '2024-07-01 09:00:00+09', NULL, TRUE)  --  3
 , ('DEP02', 'RNK04', '최수아', '850620-2567894', '경기도 남양주시 오남읍 팔현리 1', '2018-02-01 09:00:00+09', NULL, TRUE)  --  4
@@ -165,11 +165,11 @@ INSERT INTO t_employee (department_id, employee_rank_id, name, rrn, address, sta
 INSERT INTO t_production (employee_id, product_id, quantity, produced_at)
 SELECT
     ((gs - 1) % 12) + 1                                                         AS employee_id
-  , ((gs * 7 - 1) % 18) + 1                                                     AS product_id
-  , 40 + ((gs * 13) % 80)                                                        AS quantity
-  , TIMESTAMPTZ '2025-02-01 09:00:00+09'
-      + ((gs * 37) % 450) * INTERVAL '1 day'
-      + ((gs * 11) % 8)   * INTERVAL '1 hour'                                   AS produced_at
+    , ((gs * 7 - 1) % 18) + 1                                                   AS product_id
+    , 40 + ((gs * 13) % 80)                                                      AS quantity
+    , TIMESTAMPTZ '2025-02-01 09:00:00+09'
+    + ((gs * 37) % 450) * INTERVAL '1 day'
+    + ((gs * 11) % 8)   * INTERVAL '1 hour'                                     AS produced_at
 FROM generate_series(1, 100) AS gs;
 
 -- 3-2) 주문 (127행 generate_series + 데모 3행 = 130행)
@@ -180,22 +180,22 @@ FROM generate_series(1, 100) AS gs;
 INSERT INTO t_product_order (customer_id, product_id, quantity, order_status, ordered_at)
 SELECT
     ((gs * 5 - 1) % 25) + 1                                                     AS customer_id
-  , ((gs * 5 - 1) % 18) + 1                                                     AS product_id
-  , 1 + ((gs * 17) % 30)                                                         AS quantity
-  , CASE
-      WHEN (gs % 100) < 25 THEN 'ORDERED'
-      WHEN (gs % 100) < 50 THEN 'SHIPPED'
-      WHEN (gs % 100) < 90 THEN 'DELIVERED'
-      ELSE 'CANCELLED'
+    , ((gs * 5 - 1) % 18) + 1                                                   AS product_id
+    , 1 + ((gs * 17) % 30)                                                       AS quantity
+    , CASE
+        WHEN (gs % 100) < 25 THEN 'ORDERED'
+        WHEN (gs % 100) < 50 THEN 'SHIPPED'
+        WHEN (gs % 100) < 90 THEN 'DELIVERED'
+        ELSE 'CANCELLED'
     END                                                                          AS order_status
-  , TIMESTAMPTZ '2025-03-01 10:00:00+09'
-      + ((gs * 23) % 440) * INTERVAL '1 day'
-      + ((gs *  7) % 12)  * INTERVAL '1 hour'                                   AS ordered_at
+    , TIMESTAMPTZ '2025-03-01 10:00:00+09'
+    + ((gs * 23) % 440) * INTERVAL '1 day'
+    + ((gs *  7) % 12)  * INTERVAL '1 hour'                                     AS ordered_at
 FROM generate_series(1, 127) AS gs;
 
 -- 데모 대시보드용 명시 행 (최신 날짜, 시연 시 첫 화면에 보이는 대표 데이터)
 INSERT INTO t_product_order (customer_id, product_id, quantity, order_status, ordered_at) VALUES
-  (1,  1, 50, 'DELIVERED', '2026-05-20 14:30:00+09')
+(1,  1, 50, 'DELIVERED', '2026-05-20 14:30:00+09')
 , (2,  3, 12, 'SHIPPED',   '2026-05-25 10:00:00+09')
 , (5,  7,  8, 'ORDERED',   '2026-05-27 16:45:00+09');
 
@@ -207,11 +207,11 @@ INSERT INTO t_product_order (customer_id, product_id, quantity, order_status, or
 INSERT INTO t_product_return (product_order_id, return_reason_id, quantity, returned_at)
 SELECT
     o.id                                                                                        AS product_order_id
-  , 'RTN00' || (((row_number() OVER (ORDER BY o.id) - 1) % 6) + 1)::TEXT                      AS return_reason_id
-  , GREATEST(1, o.quantity / 3)                                                                 AS quantity
-  , o.ordered_at
-      + INTERVAL '7 days'
-      + ((o.id * 3) % 15) * INTERVAL '1 day'                                                   AS returned_at
+    , 'RTN00' || (((row_number() OVER (ORDER BY o.id) - 1) % 6) + 1)::TEXT                    AS return_reason_id
+    , GREATEST(1, o.quantity / 3)                                                               AS quantity
+    , o.ordered_at
+    + INTERVAL '7 days'
+    + ((o.id * 3) % 15) * INTERVAL '1 day'                                                     AS returned_at
 FROM t_product_order o
 WHERE o.order_status IN ('SHIPPED', 'DELIVERED')
 ORDER BY o.id
@@ -224,7 +224,7 @@ OFFSET 5 LIMIT 20;  -- noqa: PRS
 INSERT INTO t_inventory (product_id, stock_quantity)
 SELECT
     p.id                                                                         AS product_id
-  , COALESCE(prod.qty, 0) - COALESCE(ord.qty, 0) + COALESCE(ret.qty, 0)        AS stock_quantity
+    , COALESCE(prod.qty, 0) - COALESCE(ord.qty, 0) + COALESCE(ret.qty, 0)      AS stock_quantity
 FROM t_product p
 LEFT JOIN (
     SELECT product_id, SUM(quantity) AS qty
