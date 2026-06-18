@@ -2,7 +2,7 @@
 
 ## 1. 객체 타입 선택 기준
 
-**조회·계산은 FUNCTION, 상태 변경·작업은 PROCEDURE로 구현한다.** VIEW·TRIGGER는 사용하지 않는다.
+**조회·계산은 FUNCTION, 상태 변경·작업은 PROCEDURE로 구현한다.**
 
 ### FUNCTION vs PROCEDURE 핵심 차이
 
