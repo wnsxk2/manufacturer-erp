@@ -32,8 +32,7 @@ AS $$
       -- is_active 변경을 통한 퇴사 처리                                                                           
       UPDATE t_employee                                                                                                                         
          SET is_active        = FALSE                                                                                                           
-           , resignation_date = NOW()                                                                                                           
-           , department_id    = NULL                                                                                                            
+           , resignation_date = NOW()                                                                                                                                                                                                                     
            , updated_at       = NOW()                                                                                                           
        WHERE id = p_id;                                                                                                                         
   END;                                                                                                                                          
