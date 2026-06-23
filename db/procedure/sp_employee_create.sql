@@ -1,5 +1,5 @@
 -- 사원 정보 등록                                                                                                                             
--- 선행: ddl/01_create_table.sql                                                                                                              
+-- 선행: 없음                                                                                                   
                                                                                                                                                 
 CREATE OR REPLACE PROCEDURE sp_employee_create(                                                                                               
     p_department_id    VARCHAR(5) DEFAULT NULL                                                                                                
