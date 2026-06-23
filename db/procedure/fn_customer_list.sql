@@ -1,3 +1,5 @@
+-- 고객 목록 조회(검색 겸용)
+-- 선행: 없음 
 CREATE OR REPLACE FUNCTION fn_customer_list(                                                       
     p_name VARCHAR(50) DEFAULT NULL                                                                
 )                                                                                                  
