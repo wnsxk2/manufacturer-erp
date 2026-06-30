@@ -1,10 +1,12 @@
+-- 생산 이력 조회 
+-- 선행: 앖음
 CREATE OR REPLACE FUNCTION fn_production_list(                                                                                                
-      p_id            BIGINT       DEFAULT NULL                                                                                                 
+    p_id            BIGINT       DEFAULT NULL                                                                                                 
     , p_employee_name VARCHAR(20)  DEFAULT NULL                                                                                                 
     , p_product_name  VARCHAR(50)  DEFAULT NULL                                                                                                 
-  )                                                                                                                                             
-  RETURNS TABLE(                                                                                                                                
-      id            BIGINT                                                                                                                      
+)                                                                                                                                             
+RETURNS TABLE(                                                                                                                                
+    id            BIGINT                                                                                                                      
     , employee_id   BIGINT                                                                                                                      
     , employee_name VARCHAR                                                                                                                     
     , product_id    BIGINT                                                                                                                      
@@ -13,9 +15,9 @@ CREATE OR REPLACE FUNCTION fn_production_list(
     , produced_at   TIMESTAMPTZ                                                                                                                 
     , created_at    TIMESTAMPTZ                                                                                                                 
     , updated_at    TIMESTAMPTZ                                                                                                                 
-  )                                                                                                                                             
-  LANGUAGE plpgsql                                                                                                                              
-  AS $$                                                                                                                                         
+)                                                                                                                                             
+LANGUAGE plpgsql                                                                                                                              
+AS $$                                                                                                                                         
   DECLARE                                                                                                                                       
       v_employee_name_pattern VARCHAR;                                                                                                          
       v_product_name_pattern  VARCHAR;                                                                                                          
