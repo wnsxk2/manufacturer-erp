@@ -1,0 +1,45 @@
+CREATE OR REPLACE FUNCTION fn_production_list(                                                                                                
+      p_id            BIGINT       DEFAULT NULL                                                                                                 
+    , p_employee_name VARCHAR(20)  DEFAULT NULL                                                                                                 
+    , p_product_name  VARCHAR(50)  DEFAULT NULL                                                                                                 
+  )                                                                                                                                             
+  RETURNS TABLE(                                                                                                                                
+      id            BIGINT                                                                                                                      
+    , employee_id   BIGINT                                                                                                                      
+    , employee_name VARCHAR                                                                                                                     
+    , product_id    BIGINT                                                                                                                      
+    , product_name  VARCHAR                                                                                                                     
+    , quantity      INTEGER                                                                                                                     
+    , produced_at   TIMESTAMPTZ                                                                                                                 
+    , created_at    TIMESTAMPTZ                                                                                                                 
+    , updated_at    TIMESTAMPTZ                                                                                                                 
+  )                                                                                                                                             
+  LANGUAGE plpgsql                                                                                                                              
+  AS $$                                                                                                                                         
+  DECLARE                                                                                                                                       
+      v_employee_name_pattern VARCHAR;                                                                                                          
+      v_product_name_pattern  VARCHAR;                                                                                                          
+  BEGIN                                                                                                                                         
+      v_employee_name_pattern := RTRIM(p_employee_name) || '%';                                                                                 
+      v_product_name_pattern  := RTRIM(p_product_name) || '%';                                                                                  
+                                                                                                                                                
+      RETURN QUERY                                                                                                                              
+      SELECT                                                                                                                                    
+          pr.id                                                                                                                                 
+        , pr.employee_id                                                                                                                        
+        , e.name AS employee_name                                                                                                               
+        , pr.product_id                                                                                                                         
+        , p.name AS product_name                                                                                                                
+        , pr.quantity                                                                                                                           
+        , pr.produced_at                                                                                                                        
+        , pr.created_at                                                                                                                         
+        , pr.updated_at                                                                                                                         
+      FROM t_production pr                                                                                                                      
+      JOIN t_employee e ON e.id = pr.employee_id                                                                                                
+      JOIN t_product p ON p.id = pr.product_id                                                                                                  
+      WHERE (p_id IS NULL OR pr.id = p_id)                                                                                                      
+        AND (p_employee_name IS NULL OR e.name LIKE v_employee_name_pattern)                                                                    
+        AND (p_product_name IS NULL OR p.name LIKE v_product_name_pattern)                                                                      
+      ORDER BY pr.id;                                                                                                                           
+  END;                                                                                                                                          
+  $$;              
