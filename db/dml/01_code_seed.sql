@@ -1,4 +1,4 @@
--- 모든 테이블 초기화(TRUNCATE CASCADE) 후 코드 테이블 3종 시드 입력
+-- 모든 테이블 초기화(TRUNCATE CASCADE) 후 코드 테이블 4종 시드 입력
 -- 선행: ddl/ 전체 (테이블/PK/FK/인덱스/코멘트 적용 완료 상태)
 
 -- ============================================================
@@ -13,6 +13,7 @@ t_product_return
 , t_customer
 , t_product
 , cd_return_reason
+, cd_order_status
 , cd_employee_rank
 , cd_department
 RESTART IDENTITY CASCADE;
@@ -46,3 +47,12 @@ INSERT INTO cd_return_reason (id, reason) VALUES
 , ('RTN004', '파손')
 , ('RTN005', '주문취소')
 , ('RTN006', '사이즈상이');
+
+-- 1-4) 주문 상태 코드
+INSERT INTO cd_order_status (id, name) VALUES
+(1, '주문완료')
+, (2, '배송중')
+, (3, '배송완료')
+, (4, '주문취소')
+, (5, '반품신청')
+, (6, '반품완료');

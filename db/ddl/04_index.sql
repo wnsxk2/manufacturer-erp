@@ -1,4 +1,4 @@
--- 인덱스 일괄 생성 (UNIQUE 4개 + 일반 8개, 총 12개)
+-- 인덱스 일괄 생성 (UNIQUE 5개 + 일반 8개, 총 13개)
 -- 선행: ddl/01_create_table.sql, ddl/02_primary_key.sql
 
 -- Index
@@ -10,6 +10,9 @@ ON cd_employee_rank (name);
 
 CREATE UNIQUE INDEX uk_cd_return_reason_reason
 ON cd_return_reason (reason);
+
+CREATE UNIQUE INDEX uk_cd_order_status_name
+ON cd_order_status (name);
 
 CREATE INDEX ix_t_employee_department_id
 ON t_employee (department_id);

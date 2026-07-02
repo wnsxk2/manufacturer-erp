@@ -1,4 +1,4 @@
--- 제조사 ERP 전체 테이블 정의 (코드 3종 + 마스터/트랜잭션 7종)
+-- 제조사 ERP 전체 테이블 정의 (코드 4종 + 마스터/트랜잭션 7종)
 -- 선행: 없음 (DROP CASCADE 포함, 단독 실행 가능)
 
 -- Drop
@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS t_customer CASCADE;
 DROP TABLE IF EXISTS t_product CASCADE;
 
 DROP TABLE IF EXISTS cd_return_reason CASCADE;
+DROP TABLE IF EXISTS cd_order_status CASCADE;
 DROP TABLE IF EXISTS cd_employee_rank CASCADE;
 DROP TABLE IF EXISTS cd_department CASCADE;
 
@@ -32,6 +33,13 @@ CREATE TABLE cd_employee_rank (
 CREATE TABLE cd_return_reason (
     id VARCHAR(6)
     , reason VARCHAR(30) NOT NULL
+    , created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    , updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE cd_order_status (
+    id BIGINT
+    , name VARCHAR(20) NOT NULL
     , created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     , updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -75,6 +83,7 @@ CREATE TABLE t_production (
     , product_id BIGINT NOT NULL
     , quantity INTEGER NOT NULL
     , produced_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    , remark TEXT NULL
     , created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     , updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -92,7 +101,7 @@ CREATE TABLE t_product_order (
     , customer_id BIGINT NOT NULL
     , product_id BIGINT NOT NULL
     , quantity INTEGER NOT NULL
-    , order_status VARCHAR(20) NOT NULL DEFAULT 'ORDERED'
+    , order_status_id BIGINT NOT NULL DEFAULT 1
     , ordered_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     , created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     , updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -107,3 +116,23 @@ CREATE TABLE t_product_return (
     , created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     , updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE t_product
+ADD CONSTRAINT ck_t_product_price
+CHECK (price >= 0);
+
+ALTER TABLE t_production
+ADD CONSTRAINT ck_t_production_quantity
+CHECK (quantity > 0);
+
+ALTER TABLE t_inventory
+ADD CONSTRAINT ck_t_inventory_stock_quantity
+CHECK (stock_quantity >= 0);
+
+ALTER TABLE t_product_order
+ADD CONSTRAINT ck_t_product_order_quantity
+CHECK (quantity > 0);
+
+ALTER TABLE t_product_return
+ADD CONSTRAINT ck_t_product_return_quantity
+CHECK (quantity > 0);
