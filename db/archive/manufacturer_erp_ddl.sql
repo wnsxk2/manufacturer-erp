@@ -1,3 +1,6 @@
+-- 제조사 ERP 전체 테이블 정의 (코드 4종 + 마스터/트랜잭션 7종)
+-- 선행: 없음 (DROP CASCADE 포함, 단독 실행 가능)
+
 -- Drop
 DROP TABLE IF EXISTS t_product_return CASCADE;
 DROP TABLE IF EXISTS t_product_order CASCADE;
@@ -8,6 +11,7 @@ DROP TABLE IF EXISTS t_customer CASCADE;
 DROP TABLE IF EXISTS t_product CASCADE;
 
 DROP TABLE IF EXISTS cd_return_reason CASCADE;
+DROP TABLE IF EXISTS cd_order_status CASCADE;
 DROP TABLE IF EXISTS cd_employee_rank CASCADE;
 DROP TABLE IF EXISTS cd_department CASCADE;
 
@@ -29,6 +33,13 @@ CREATE TABLE cd_employee_rank (
 CREATE TABLE cd_return_reason (
     id VARCHAR(6)
     , reason VARCHAR(30) NOT NULL
+    , created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    , updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE cd_order_status (
+    id BIGINT
+    , name VARCHAR(20) NOT NULL
     , created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     , updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -72,6 +83,7 @@ CREATE TABLE t_production (
     , product_id BIGINT NOT NULL
     , quantity INTEGER NOT NULL
     , produced_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    , remark TEXT NULL
     , created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     , updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -89,7 +101,7 @@ CREATE TABLE t_product_order (
     , customer_id BIGINT NOT NULL
     , product_id BIGINT NOT NULL
     , quantity INTEGER NOT NULL
-    , order_status VARCHAR(20) NOT NULL DEFAULT 'ORDERED'
+    , order_status_id BIGINT NOT NULL DEFAULT 1
     , ordered_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     , created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     , updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -105,6 +117,29 @@ CREATE TABLE t_product_return (
     , updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+ALTER TABLE t_product
+ADD CONSTRAINT ck_t_product_price
+CHECK (price >= 0);
+
+ALTER TABLE t_production
+ADD CONSTRAINT ck_t_production_quantity
+CHECK (quantity > 0);
+
+ALTER TABLE t_inventory
+ADD CONSTRAINT ck_t_inventory_stock_quantity
+CHECK (stock_quantity >= 0);
+
+ALTER TABLE t_product_order
+ADD CONSTRAINT ck_t_product_order_quantity
+CHECK (quantity > 0);
+
+ALTER TABLE t_product_return
+ADD CONSTRAINT ck_t_product_return_quantity
+CHECK (quantity > 0);
+
+-- 모든 테이블 기본키(PK) 제약 정의 (11개)
+-- 선행: ddl/01_create_table.sql
+
 -- Primary Key
 ALTER TABLE cd_department
 ADD CONSTRAINT pk_cd_department
@@ -116,6 +151,10 @@ PRIMARY KEY (id);
 
 ALTER TABLE cd_return_reason
 ADD CONSTRAINT pk_cd_return_reason
+PRIMARY KEY (id);
+
+ALTER TABLE cd_order_status
+ADD CONSTRAINT pk_cd_order_status
 PRIMARY KEY (id);
 
 ALTER TABLE t_product
@@ -145,6 +184,9 @@ PRIMARY KEY (id);
 ALTER TABLE t_product_return
 ADD CONSTRAINT pk_t_product_return
 PRIMARY KEY (id);
+
+-- 외래키 제약 일괄 정의 (fk_t_employee_* 외 10개)
+-- 선행: ddl/01_create_table.sql, ddl/02_primary_key.sql
 
 -- Foreign Key
 ALTER TABLE t_employee
@@ -182,6 +224,11 @@ ADD CONSTRAINT fk_t_product_order_product_id
 FOREIGN KEY (product_id)
 REFERENCES t_product (id);
 
+ALTER TABLE t_product_order
+ADD CONSTRAINT fk_t_product_order_order_status_id
+FOREIGN KEY (order_status_id)
+REFERENCES cd_order_status (id);
+
 ALTER TABLE t_product_return
 ADD CONSTRAINT fk_t_product_return_product_order_id
 FOREIGN KEY (product_order_id)
@@ -192,6 +239,9 @@ ADD CONSTRAINT fk_t_product_return_return_reason_id
 FOREIGN KEY (return_reason_id)
 REFERENCES cd_return_reason (id);
 
+-- 인덱스 일괄 생성 (UNIQUE 5개 + 일반 8개, 총 13개)
+-- 선행: ddl/01_create_table.sql, ddl/02_primary_key.sql
+
 -- Index
 CREATE UNIQUE INDEX uk_cd_department_name
 ON cd_department (name);
@@ -201,6 +251,9 @@ ON cd_employee_rank (name);
 
 CREATE UNIQUE INDEX uk_cd_return_reason_reason
 ON cd_return_reason (reason);
+
+CREATE UNIQUE INDEX uk_cd_order_status_name
+ON cd_order_status (name);
 
 CREATE INDEX ix_t_employee_department_id
 ON t_employee (department_id);
@@ -229,6 +282,9 @@ ON t_product_return (product_order_id);
 CREATE INDEX ix_t_product_return_return_reason_id
 ON t_product_return (return_reason_id);
 
+-- 전체 테이블 및 컬럼 한국어 코멘트 일괄 등록
+-- 선행: ddl/01_create_table.sql
+
 -- Comment
 COMMENT ON TABLE cd_department IS '부서 코드 테이블';
 COMMENT ON COLUMN cd_department.id IS '부서 ID';
@@ -247,6 +303,12 @@ COMMENT ON COLUMN cd_return_reason.id IS '반품 사유 ID';
 COMMENT ON COLUMN cd_return_reason.reason IS '반품 사유';
 COMMENT ON COLUMN cd_return_reason.created_at IS '생성일시';
 COMMENT ON COLUMN cd_return_reason.updated_at IS '수정일시';
+
+COMMENT ON TABLE cd_order_status IS '주문 상태 코드 테이블';
+COMMENT ON COLUMN cd_order_status.id IS '주문 상태 ID';
+COMMENT ON COLUMN cd_order_status.name IS '주문 상태명';
+COMMENT ON COLUMN cd_order_status.created_at IS '생성일시';
+COMMENT ON COLUMN cd_order_status.updated_at IS '수정일시';
 
 COMMENT ON TABLE t_product IS '제품 테이블';
 COMMENT ON COLUMN t_product.id IS '제품 ID';
@@ -284,6 +346,7 @@ COMMENT ON COLUMN t_production.employee_id IS '사원 ID';
 COMMENT ON COLUMN t_production.product_id IS '제품 ID';
 COMMENT ON COLUMN t_production.quantity IS '생산 수량';
 COMMENT ON COLUMN t_production.produced_at IS '생산일시';
+COMMENT ON COLUMN t_production.remark IS '비고';
 COMMENT ON COLUMN t_production.created_at IS '생성일시';
 COMMENT ON COLUMN t_production.updated_at IS '수정일시';
 
@@ -299,7 +362,7 @@ COMMENT ON COLUMN t_product_order.id IS '주문 ID';
 COMMENT ON COLUMN t_product_order.customer_id IS '고객 ID';
 COMMENT ON COLUMN t_product_order.product_id IS '제품 ID';
 COMMENT ON COLUMN t_product_order.quantity IS '주문 수량';
-COMMENT ON COLUMN t_product_order.order_status IS '주문 상태';
+COMMENT ON COLUMN t_product_order.order_status_id IS '주문 상태 ID';
 COMMENT ON COLUMN t_product_order.ordered_at IS '주문일시';
 COMMENT ON COLUMN t_product_order.created_at IS '생성일시';
 COMMENT ON COLUMN t_product_order.updated_at IS '수정일시';

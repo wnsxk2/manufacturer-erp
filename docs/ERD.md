@@ -23,6 +23,13 @@ erDiagram
         timestamptz updated_at "수정일시"
     }
 
+    cd_order_status {
+        bigint id PK "주문 상태 ID"
+        varchar name "주문 상태명"
+        timestamptz created_at "생성일시"
+        timestamptz updated_at "수정일시"
+    }
+
     t_product {
         bigint id PK "제품 ID"
         varchar name "제품명"
@@ -80,7 +87,7 @@ erDiagram
         bigint customer_id FK "고객 ID"
         bigint product_id FK "제품 ID"
         integer quantity "주문 수량"
-        varchar order_status "주문 상태"
+        bigint order_status_id FK "주문 상태 ID"
         timestamptz ordered_at "주문일시"
         timestamptz created_at "생성일시"
         timestamptz updated_at "수정일시"
@@ -91,7 +98,6 @@ erDiagram
         bigint product_order_id FK "주문 ID"
         varchar return_reason_id FK "반품 사유 ID"
         integer quantity "반품 수량"
-        varchar return_status "반품 상태"
         timestamptz returned_at "반품일시"
         timestamptz created_at "생성일시"
         timestamptz updated_at "수정일시"
@@ -107,6 +113,7 @@ erDiagram
 
     t_customer ||--o{ t_product_order : "places"
     t_product ||--o{ t_product_order : "is ordered"
+    cd_order_status ||--o{ t_product_order : "status"
 
     t_product_order ||--o{ t_product_return : "has return"
     cd_return_reason ||--o{ t_product_return : "reason"

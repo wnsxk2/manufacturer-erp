@@ -1,4 +1,4 @@
--- 외래키 제약 일괄 정의 (fk_t_employee_* 외 9개)
+-- 외래키 제약 일괄 정의 (fk_t_employee_* 외 10개)
 -- 선행: ddl/01_create_table.sql, ddl/02_primary_key.sql
 
 -- Foreign Key
@@ -36,6 +36,11 @@ ALTER TABLE t_product_order
 ADD CONSTRAINT fk_t_product_order_product_id
 FOREIGN KEY (product_id)
 REFERENCES t_product (id);
+
+ALTER TABLE t_product_order
+ADD CONSTRAINT fk_t_product_order_order_status_id
+FOREIGN KEY (order_status_id)
+REFERENCES cd_order_status (id);
 
 ALTER TABLE t_product_return
 ADD CONSTRAINT fk_t_product_return_product_order_id

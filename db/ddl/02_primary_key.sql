@@ -1,4 +1,4 @@
--- 모든 테이블 기본키(PK) 제약 정의 (10개)
+-- 모든 테이블 기본키(PK) 제약 정의 (11개)
 -- 선행: ddl/01_create_table.sql
 
 -- Primary Key
@@ -12,6 +12,10 @@ PRIMARY KEY (id);
 
 ALTER TABLE cd_return_reason
 ADD CONSTRAINT pk_cd_return_reason
+PRIMARY KEY (id);
+
+ALTER TABLE cd_order_status
+ADD CONSTRAINT pk_cd_order_status
 PRIMARY KEY (id);
 
 ALTER TABLE t_product

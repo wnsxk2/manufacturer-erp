@@ -6,8 +6,9 @@
 -- employee_id: 1~12 (생산 풀), 7과 12는 coprime → 전 제품 커버
 -- quantity: 40~119 (생산 풀이 충분히 주문보다 크도록 floor 40)
 -- produced_at: 2025-02-01 ~ 2026-05-26 분산
+-- remark: 일부 생산 이력에 검수 완료 비고 입력
 -- ============================================================
-INSERT INTO t_production (employee_id, product_id, quantity, produced_at)
+INSERT INTO t_production (employee_id, product_id, quantity, produced_at, remark)
 SELECT
     ((gs - 1) % 12) + 1 AS employee_id
     , ((gs * 7 - 1) % 18) + 1 AS product_id
@@ -15,4 +16,7 @@ SELECT
     , TIMESTAMPTZ '2025-02-01 09:00:00+09'
     + ((gs * 37) % 450) * INTERVAL '1 day'
     + ((gs * 11) % 8) * INTERVAL '1 hour' AS produced_at
+    , CASE
+        WHEN gs % 5 = 0 THEN '검수 완료'
+    END AS remark
 FROM GENERATE_SERIES(1, 100) AS gs;

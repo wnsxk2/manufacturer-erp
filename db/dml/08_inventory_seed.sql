@@ -1,8 +1,8 @@
--- t_inventory 집계 INSERT (생산 − 비취소주문 + 반품으로 재고 산출, 18행)
+-- t_inventory 집계 INSERT (생산 − 비취소주문 + 단순변심 완료 반품으로 재고 산출, 18행)
 -- 선행: dml/05_production_seed.sql, dml/06_order_seed.sql, dml/07_return_seed.sql
 
 -- ============================================================
--- 4) 재고 (생산 - 비취소주문 + 반품으로 정확히 계산)
+-- 4) 재고 (생산 - 비취소주문 + 단순변심 완료 반품으로 정확히 계산)
 -- ============================================================
 INSERT INTO t_inventory (product_id, stock_quantity)
 WITH prod AS (
@@ -18,7 +18,7 @@ WITH prod AS (
         product_id
         , SUM(quantity) AS qty
     FROM t_product_order
-    WHERE order_status <> 'CANCELLED'
+    WHERE order_status_id <> 4
     GROUP BY product_id
 )
 
@@ -28,6 +28,9 @@ WITH prod AS (
         , SUM(pr.quantity) AS qty
     FROM t_product_return AS pr
     INNER JOIN t_product_order AS po ON pr.product_order_id = po.id
+    WHERE
+        po.order_status_id = 6
+        AND pr.return_reason_id = 'RTN003'
     GROUP BY po.product_id
 )
 

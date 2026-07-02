@@ -20,6 +20,12 @@ COMMENT ON COLUMN cd_return_reason.reason IS '반품 사유';
 COMMENT ON COLUMN cd_return_reason.created_at IS '생성일시';
 COMMENT ON COLUMN cd_return_reason.updated_at IS '수정일시';
 
+COMMENT ON TABLE cd_order_status IS '주문 상태 코드 테이블';
+COMMENT ON COLUMN cd_order_status.id IS '주문 상태 ID';
+COMMENT ON COLUMN cd_order_status.name IS '주문 상태명';
+COMMENT ON COLUMN cd_order_status.created_at IS '생성일시';
+COMMENT ON COLUMN cd_order_status.updated_at IS '수정일시';
+
 COMMENT ON TABLE t_product IS '제품 테이블';
 COMMENT ON COLUMN t_product.id IS '제품 ID';
 COMMENT ON COLUMN t_product.name IS '제품명';
@@ -56,6 +62,7 @@ COMMENT ON COLUMN t_production.employee_id IS '사원 ID';
 COMMENT ON COLUMN t_production.product_id IS '제품 ID';
 COMMENT ON COLUMN t_production.quantity IS '생산 수량';
 COMMENT ON COLUMN t_production.produced_at IS '생산일시';
+COMMENT ON COLUMN t_production.remark IS '비고';
 COMMENT ON COLUMN t_production.created_at IS '생성일시';
 COMMENT ON COLUMN t_production.updated_at IS '수정일시';
 
@@ -71,7 +78,7 @@ COMMENT ON COLUMN t_product_order.id IS '주문 ID';
 COMMENT ON COLUMN t_product_order.customer_id IS '고객 ID';
 COMMENT ON COLUMN t_product_order.product_id IS '제품 ID';
 COMMENT ON COLUMN t_product_order.quantity IS '주문 수량';
-COMMENT ON COLUMN t_product_order.order_status IS '주문 상태';
+COMMENT ON COLUMN t_product_order.order_status_id IS '주문 상태 ID';
 COMMENT ON COLUMN t_product_order.ordered_at IS '주문일시';
 COMMENT ON COLUMN t_product_order.created_at IS '생성일시';
 COMMENT ON COLUMN t_product_order.updated_at IS '수정일시';
